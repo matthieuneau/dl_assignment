@@ -1,3 +1,4 @@
+from datetime import time
 from diffusers import (
     DDPMScheduler,
     UNet2DModel,
@@ -15,7 +16,9 @@ np.random.seed(42)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Load model
-model = UNet2DModel.from_pretrained("google/ddpm-cat-256", use_safetensors=True)
+model = UNet2DModel.from_pretrained("google/ddpm-cat-256", use_safetensors=True).to(
+    device
+)
 
 # Define schedulers and timesteps
 schedulers = [DDPMScheduler, EDMEulerScheduler, EulerAncestralDiscreteScheduler]
@@ -26,9 +29,10 @@ fig, axes = plt.subplots(3, 3, figsize=(12, 12))
 fig.suptitle("Generated Images with Different Schedulers and Timesteps", fontsize=16)
 
 # Loop through schedulers and timesteps
-for i, scheduler_cls in enumerate(schedulers):
+for i, scheduler in enumerate(schedulers):
     for j, timesteps in enumerate(timesteps_list):
-        scheduler = scheduler_cls.from_pretrained("google/ddpm-cat-256")
+        print("scheduler", scheduler, "timesteps", timesteps)
+        scheduler = scheduler.from_pretrained("google/ddpm-cat-256").to(device)
         scheduler.set_timesteps(timesteps)
 
         # Generate initial noise
@@ -51,7 +55,7 @@ for i, scheduler_cls in enumerate(schedulers):
         axes[i, j].imshow(image)
         axes[i, j].axis("off")
         axes[i, j].set_title(
-            f"{scheduler_cls.__name__}\nTimesteps: {timesteps}", fontsize=10
+            f"{scheduler.__name__}\nTimesteps: {timesteps}", fontsize=10
         )
 
 # Adjust layout and save the plot
