@@ -31,7 +31,7 @@ fig.suptitle("Generated Images with Different Schedulers and Timesteps", fontsiz
 # Loop through schedulers and timesteps
 for i, scheduler in enumerate(schedulers):
     for j, timesteps in enumerate(timesteps_list):
-        print("scheduler", scheduler, "timesteps", timesteps)
+        print("scheduler", scheduler.__class__, "timesteps", timesteps)
         scheduler = scheduler.from_pretrained("google/ddpm-cat-256")
         scheduler.set_timesteps(timesteps)
 
