@@ -1,4 +1,5 @@
 from datetime import time
+from tqdm import tqdm
 from diffusers import (
     DDPMScheduler,
     UNet2DModel,
@@ -31,7 +32,6 @@ fig.suptitle("Generated Images with Different Schedulers and Timesteps", fontsiz
 # Loop through schedulers and timesteps
 for i, scheduler in enumerate(schedulers):
     for j, timesteps in enumerate(timesteps_list):
-        print(i, j)
         scheduler = scheduler.from_pretrained("google/ddpm-cat-256")
         scheduler.set_timesteps(timesteps)
 
@@ -41,9 +41,10 @@ for i, scheduler in enumerate(schedulers):
         input = noise
 
         # Generate the image
-        for t in scheduler.timesteps:
+        for t in tqdm(scheduler.timesteps):
             with torch.no_grad():
                 noisy_residual = model(input, t).sample
+                noisy_residual = scheduler.scale_model_input(input, t)
             previous_noisy_sample = scheduler.step(noisy_residual, t, input).prev_sample
             input = previous_noisy_sample
 
@@ -55,7 +56,7 @@ for i, scheduler in enumerate(schedulers):
         axes[i, j].imshow(image)
         axes[i, j].axis("off")
         axes[i, j].set_title(
-            f"{scheduler.__name__}\nTimesteps: {timesteps}", fontsize=10
+            f"{scheduler.__class__}\nTimesteps: {timesteps}", fontsize=10
         )
 
 # Adjust layout and save the plot
