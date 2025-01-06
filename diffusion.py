@@ -32,7 +32,7 @@ fig.suptitle("Generated Images with Different Schedulers and Timesteps", fontsiz
 for i, scheduler in enumerate(schedulers):
     for j, timesteps in enumerate(timesteps_list):
         print("scheduler", scheduler, "timesteps", timesteps)
-        scheduler = scheduler.from_pretrained("google/ddpm-cat-256").to(device)
+        scheduler = scheduler.from_pretrained("google/ddpm-cat-256")
         scheduler.set_timesteps(timesteps)
 
         # Generate initial noise
