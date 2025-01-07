@@ -23,7 +23,7 @@ model = UNet2DModel.from_pretrained("google/ddpm-cat-256", use_safetensors=True)
 
 # Define schedulers and timesteps
 schedulers = [DDPMScheduler, EDMEulerScheduler, EulerAncestralDiscreteScheduler]
-timesteps_list = [5]
+timesteps_list = [5, 10, 20]
 
 # Initialize plot
 fig, axes = plt.subplots(3, 3, figsize=(12, 12))
